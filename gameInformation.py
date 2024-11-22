@@ -186,10 +186,10 @@ def run(path):
 '''
     avatar_schema = {1: (int, int, int, str, str, str), "id": str, "file": str}
     table = reader.readSchema(avatar_schema)
-    with open("avatar.txt", "w", encoding="utf8") as f:
+    '''with open("avatar.txt", "w", encoding="utf8") as f:
         for item in table:
             f.write(item["id"])
-            f.write("\n")
+            f.write("\n")'''
     with open("avatar.csv", "w", encoding="utf8") as f:
         for item in table:
             f.write("%s,%s\n" % (item["id"], item["file"][7:]))

@@ -1,3 +1,16 @@
+avatar/
+Chart_*/
+Illustration/
+music/
+phira/
+*.apk
+avatar.csv
+difficulty.csv
+collection.csv
+info.csv
+info_new.csv
+tips.txt
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
