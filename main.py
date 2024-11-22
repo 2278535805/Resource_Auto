@@ -9,8 +9,8 @@ import getResource
 import phira
 
 
-ver_now = "3.10.2"
-#ver_now = input("请输入当前版本号:")
+#ver_now = "3.10.2"
+ver_now = input("请输入当前版本号:")
 
 r = taptap.taptap(165287)
 print(f"TapTap: {r["data"]["apk"]["version_name"]}")
@@ -51,4 +51,4 @@ getResource.run(apk_name, {
 
 phira.run(False)
 
-#input("Finish")
+input("Finish")

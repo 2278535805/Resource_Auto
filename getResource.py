@@ -116,7 +116,7 @@ def save(key, entry, pbar):
         name = key[:-10]
         file_name = (name[:17] + '...') if len(name) > 20 else name
         pbar.set_postfix_str(file_name)
-        #pool.submit(save_music, f"music/{name}.wav", obj)
+        #pool.submit(save_music, f"music/{name}.ogg", obj)
         #queue_in.put((f"music/{name}.wav", obj.samples["music.wav"]))
         save_music(f"music/{name}.ogg", obj)
 

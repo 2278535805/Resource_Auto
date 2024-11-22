@@ -1,6 +1,6 @@
 import os
 import shutil
-from zipfile import ZipFile, ZIP_STORED
+from zipfile import ZipFile, ZIP_STORED, ZIP_DEFLATED
 import csv
 from concurrent.futures import ThreadPoolExecutor
 from tqdm import tqdm
@@ -11,7 +11,7 @@ def create_zip_file(id, info, levels, level, pbar):
     pez_filename = f"phira/{levels[level]}/{id}-{levels[level]}.pez"
     num = ".0"
     if os.path.exists(f"Chart_{levels[level]}/{id}{num}.json"):
-        with ZipFile(pez_filename, "w", compression=ZIP_STORED) as pez:
+        with ZipFile(pez_filename, "w", compression=ZIP_DEFLATED) as pez:
             pez.write(f"Chart_{levels[level]}/{id}{num}.json", f"{id}.json")
             pez.write(f"Illustration/{id}{num}.png", f"{id}.png")
             pez.write(f"music/{id}{num}.ogg", f"{id}.ogg")
