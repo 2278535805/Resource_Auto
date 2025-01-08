@@ -11,6 +11,7 @@ collection.csv
 info.csv
 info_new.csv
 tips.txt
+test_*.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

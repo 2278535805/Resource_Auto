@@ -7,6 +7,7 @@ import taptap
 import gameInformation
 import getResource
 import phira
+import ttools
 
 
 #ver_now = "3.10.2"
@@ -19,13 +20,18 @@ print(f"TapTap: {r["data"]["apk"]["version_name"]} ({times})", end="\r")
 
 while ver_now == r["data"]["apk"]["version_name"]:
     times += 1
-    time.sleep(1)
-    r = taptap.taptap(165287)
-    print(f"TapTap: {r["data"]["apk"]["version_name"]} ({times})", end="\r")
+    time.sleep(10)
+    try:
+        r = taptap.taptap(165287)
+        print(f"TapTap: {r["data"]["apk"]["version_name"]} ({times})")
+    except:
+        print("null")
 else:
     print()
 
+#r = taptap.taptap(165287)
 ver = r["data"]["apk"]["version_name"]
+#ver = "3.10.1"
 apk_name = f"Phigros_{ver}.apk"
 if os.path.exists(apk_name):
     print("Apk exists, skip download")
@@ -52,5 +58,16 @@ getResource.run(apk_name, {
 })
 
 phira.run(False)
+
+render = c["RENDER"]
+if render.getboolean("auto_render"):
+    if render.getboolean("AT"):
+        ttools.sfileTask(render.get("phi_render"), "phira/AT")
+    if render.getboolean("IN"):
+        ttools.sfileTask(render.get("phi_render"), "phira/IN")
+    if render.getboolean("HD"):
+        ttools.sfileTask(render.get("phi_render"), "phira/HD")
+    if render.getboolean("EZ"):
+        ttools.sfileTask(render.get("phi_render"), "phira/EZ")
 
 input("Finish")

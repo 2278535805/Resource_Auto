@@ -206,7 +206,7 @@ def run(path, c):
                     line = f.readline()
             index1 = l.index("Doppelganger.LeaF")
             index2 = l.index("Poseidon.1112vsStar")
-            # index2 = l.index("Random.SobremSilentroom") + 1 # Test Random
+            # index1 = l.index("ENERGYSYNERGYMATRIX.Tanchiky") + 1 # 指定导出
             del l[index2:len(l) - config["UPDATE"]["side_story"]] 
             del l[index1:index2 - config["UPDATE"]["other_song"]] 
             del l[:index1 - config["UPDATE"]["main_story"]]
