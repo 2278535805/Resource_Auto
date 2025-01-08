@@ -1,20 +1,21 @@
 import subprocess
 import os
+import sys
 
 # Single Chart
-def schartTask(dir,path):
+def schartTask(dir, path):
     makeOneTask(dir, path)
 
 # Single Folder
-def sfileTask(dir,path):
+def sfileTask(dir, path, output):
     for file in os.listdir(path):
         if file.endswith(".pez"):
             #command = f"--render {path}/{file}"
             #makeTask(dir,command)
-            makeOneTask(dir, f"{path}/{file}")
+            makeOneTask(dir, os.path.join(path, file), output)
 
 # All Folder
-def fileTask(dir,path):
+def fileTask(dir, path):
     for root, dirs, files in os.walk(path):
         for file in files:
             if file.endswith(".pez"):
@@ -22,19 +23,23 @@ def fileTask(dir,path):
 
 
 # Create Task
-def makeTask(dir,root, file):
-    command = f"\"{dir}\" --render {os.path.abspath(root)}/{file}"
+def makeTask(dir, root, file):
+    full_root = os.path.abspath(root)
+    input = os.path.join(full_root, file)
+    command = f"\"{dir}\" --render {input}"
 
     print(command)
-    process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    process = subprocess.Popen(command, shell=True, stdout=sys.stdout, stderr=sys.stderr)
 
     process.wait()
 
-def makeOneTask(dir, file):
-    command = f"\"{dir}\" --render {os.path.abspath(file)}"
+def makeOneTask(dir, file, output):
+    full_file = os.path.abspath(file)
+    full_output = os.path.abspath(output)
+    command = f"\"{dir}\" --render {full_file} {full_output}"
     
     print(command)
-    process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    process = subprocess.Popen(command, shell=True, stdout=sys.stdout, stderr=sys.stderr)
 
     process.wait()
 

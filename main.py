@@ -60,23 +60,22 @@ getResource.run(apk_name, {
 phira.run(False)
 
 render = c["RENDER"]
+output_directory = os.path.join("output")
+if not os.path.exists(output_directory):
+        os.makedirs(output_directory)
 if render.getboolean("autoRender"):
     if render.getboolean("AT"):
-        ttools.sfileTask(render.get("phiRender"), "phira/AT")
+        ttools.sfileTask(render.get("phiRender"), os.path.join("phira", "AT"), output_directory)
     if render.getboolean("IN"):
-        ttools.sfileTask(render.get("phiRender"), "phira/IN")
+        ttools.sfileTask(render.get("phiRender"), os.path.join("phira", "IN"), output_directory)
     if render.getboolean("HD"):
-        ttools.sfileTask(render.get("phiRender"), "phira/HD")
+        ttools.sfileTask(render.get("phiRender"), os.path.join("phira", "HD"), output_directory)
     if render.getboolean("EZ"):
-        ttools.sfileTask(render.get("phiRender"), "phira/EZ")
+        ttools.sfileTask(render.get("phiRender"), os.path.join("phira", "EZ"), output_directory)
 
 if render.getboolean("autoCover"):
     import autoImage
     input_directory = "Illustration"
-    output_directory = os.path.join("Cover")
-
-    if not os.path.exists(output_directory):
-        os.makedirs(output_directory)
 
     for file in os.listdir(input_directory):
         if file.endswith(".png"):
