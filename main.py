@@ -61,17 +61,25 @@ phira.run(False)
 
 render = c["RENDER"]
 output_directory = os.path.join("output")
+
+difficulty = ["AT", "IN", "HD", "EZ"]
+
 if not os.path.exists(output_directory):
         os.makedirs(output_directory)
+
+def pushRender(difficulty, output_directory):
+    if render.getboolean(difficulty):
+        input_folder = os.path.join("phira", difficulty)
+        output_folder =os.path.join(output_directory, difficulty)
+        if not os.path.exists(output_folder):
+            os.makedirs(output_folder)
+        ttools.sfileTask(render.get("phiRender"), input_folder, output_folder)
+
 if render.getboolean("autoRender"):
-    if render.getboolean("AT"):
-        ttools.sfileTask(render.get("phiRender"), os.path.join("phira", "AT"), output_directory)
-    if render.getboolean("IN"):
-        ttools.sfileTask(render.get("phiRender"), os.path.join("phira", "IN"), output_directory)
-    if render.getboolean("HD"):
-        ttools.sfileTask(render.get("phiRender"), os.path.join("phira", "HD"), output_directory)
-    if render.getboolean("EZ"):
-        ttools.sfileTask(render.get("phiRender"), os.path.join("phira", "EZ"), output_directory)
+    pushRender(difficulty[0], output_directory)
+    pushRender(difficulty[1], output_directory)
+    pushRender(difficulty[2], output_directory)
+    pushRender(difficulty[3], output_directory)
 
 if render.getboolean("autoCover"):
     import autoImage
@@ -81,7 +89,7 @@ if render.getboolean("autoCover"):
         if file.endswith(".png"):
             print(file)
             input_file_path = os.path.join(input_directory, file)
-            output_file_path = os.path.join(output_directory, file)
+            output_file_path = os.path.join(output_directory, "Cover", file)
             autoImage.run(input_file_path, output_file_path)
 
 
