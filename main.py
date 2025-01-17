@@ -10,39 +10,49 @@ import phira
 import ttools
 
 
-#ver_now = "3.10.2"
-ver_now = input("请输入当前版本号:")
-
-times = 0
-r = taptap.taptap(165287)
-print(f"TapTap: {r["data"]["apk"]["version_name"]} ({times})", end="\r")
-
-
-while ver_now == r["data"]["apk"]["version_name"]:
-    times += 1
-    time.sleep(10)
-    try:
-        r = taptap.taptap(165287)
-        print(f"TapTap: {r["data"]["apk"]["version_name"]} ({times})")
-    except:
-        print("null")
-else:
-    print()
-
-#r = taptap.taptap(165287)
-ver = r["data"]["apk"]["version_name"]
-#ver = "3.10.1"
-apk_name = f"Phigros_{ver}.apk"
-if os.path.exists(apk_name):
-    print("Apk exists, skip download")
-else:
-    wget.download(r["data"]["apk"]["download"], apk_name)
-
-gameInformation.run(apk_name)
-
 c = ConfigParser()
 c.read("config.ini", "utf8")
 types = c["TYPES"]
+render = c["SETTING"]
+
+
+ver_now = input("请输入当前版本号:")
+
+if render.getboolean("autoUpdate"):
+    times = 0
+    r = taptap.taptap(165287)
+    print(f"TapTap: {r["data"]["apk"]["version_name"]} ({times})", end="\r")
+
+
+    while ver_now == r["data"]["apk"]["version_name"]:
+        times += 1
+        time.sleep(10)
+        try:
+            r = taptap.taptap(165287)
+            print(f"TapTap: {r["data"]["apk"]["version_name"]} ({times})")
+        except:
+            print("null")
+    else:
+        print()
+
+    #r = taptap.taptap(165287)
+    ver = r["data"]["apk"]["version_name"]
+    #ver = "3.10.1"
+    apk_name = f"Phigros_{ver}.apk"
+    if os.path.exists(apk_name):
+        print("Apk exists, skip download")
+    else:
+        wget.download(r["data"]["apk"]["download"], apk_name)
+
+
+    apk_name = f"Phigros_{ver}.apk"
+else:
+    apk_name = f"Phigros_{ver_now}.apk"
+
+gameInformation.run(apk_name)
+
+
+start_time = time.time()
 getResource.run(apk_name, {
     "avatar": types.getboolean("avatar"),
     "Chart": types.getboolean("Chart"),
@@ -56,11 +66,15 @@ getResource.run(apk_name, {
         "other_song": c["UPDATE"].getint("other_song")
     }
 })
+print(f"elapsed time: {time.time() - start_time} s")
 
+start_time = time.time()
 phira.run(False)
+print(f"elapsed time: {time.time() - start_time} s")
 
-render = c["RENDER"]
+
 output_directory = os.path.join("output")
+cover_output_directory = os.path.join(output_directory, "Cover")
 
 difficulty = ["AT", "IN", "HD", "EZ"]
 
@@ -76,21 +90,28 @@ def pushRender(difficulty, output_directory):
         ttools.sfileTask(render.get("phiRender"), input_folder, output_folder)
 
 if render.getboolean("autoRender"):
+    start_time = time.time()
     pushRender(difficulty[0], output_directory)
     pushRender(difficulty[1], output_directory)
     pushRender(difficulty[2], output_directory)
     pushRender(difficulty[3], output_directory)
+    print(f"elapsed time: {time.time() - start_time} s")
 
 if render.getboolean("autoCover"):
+    start_time = time.time()
     import autoImage
     input_directory = "Illustration"
+
+    if not os.path.exists(cover_output_directory):
+        os.makedirs(cover_output_directory)
 
     for file in os.listdir(input_directory):
         if file.endswith(".png"):
             print(file)
             input_file_path = os.path.join(input_directory, file)
-            output_file_path = os.path.join(output_directory, "Cover", file)
+            output_file_path = os.path.join(cover_output_directory, file)
             autoImage.run(input_file_path, output_file_path)
+    print(f"elapsed time: {time.time() - start_time} s")
 
 
 input("Finish")
