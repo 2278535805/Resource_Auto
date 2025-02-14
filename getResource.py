@@ -89,14 +89,14 @@ def save(key, entry, pbar):
         file_name = (name[:17] + '...') if len(name) > 20 else name
         pbar.set_postfix_str(file_name)
         queue_in.put(("Chart_%s/%s.json" % (key[-11:-5], name), obj.script))
-    elif config["IllustrationBlur"] and key.endswith("/IllustrationBlur.png"):
+    elif config["IllustrationBlur"] and key.endswith("/IllustrationBlur.jpg"):
         bytesIO = BytesIO()
         obj.image.save(bytesIO, "png")
         name = key[:-21]
         file_name = (name[:17] + '...') if len(name) > 20 else name
         pbar.set_postfix_str(file_name)
         queue_in.put((f"IllustrationBlur/{name}.png", bytesIO))
-    elif config["IllustrationLowRes"] and key.endswith("/IllustrationLowRes.png"):
+    elif config["IllustrationLowRes"] and key.endswith("/IllustrationLowRes.jpg"):
         name = key[:-23]
         file_name = (name[:17] + '...') if len(name) > 20 else name
         pbar.set_postfix_str(file_name)
@@ -104,7 +104,7 @@ def save(key, entry, pbar):
         obj.image.save(bytesIO, "png")
         queue_in.put((f"IllustrationLowRes/{name}.png", bytesIO))
         #pool.submit(save_image, f"IllustrationLowRes/{name}.png", obj.image)
-    elif config["Illustration"] and key.endswith("/Illustration.png"):
+    elif config["Illustration"] and key.endswith("/Illustration.jpg"):
         name = key[:-17]
         file_name = (name[:17] + '...') if len(name) > 20 else name
         pbar.set_postfix_str(file_name)
