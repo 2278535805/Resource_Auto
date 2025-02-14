@@ -76,6 +76,22 @@ print(f"elapsed time: {time.time() - start_time} s")
 output_directory = os.path.join("output")
 cover_output_directory = os.path.join(output_directory, "Cover")
 
+if render.getboolean("autoCover"):
+    start_time = time.time()
+    import autoImage
+    input_directory = "Illustration"
+
+    if not os.path.exists(cover_output_directory):
+        os.makedirs(cover_output_directory)
+
+    for file in os.listdir(input_directory):
+        if file.endswith(".png"):
+            print(file)
+            input_file_path = os.path.join(input_directory, file)
+            output_file_path = os.path.join(cover_output_directory, file)
+            autoImage.run(input_file_path, output_file_path)
+    print(f"elapsed time: {time.time() - start_time} s")
+
 difficulty = ["AT", "IN", "HD", "EZ"]
 
 if not os.path.exists(output_directory):
@@ -95,22 +111,6 @@ if render.getboolean("autoRender"):
     pushRender(difficulty[1], output_directory)
     pushRender(difficulty[2], output_directory)
     pushRender(difficulty[3], output_directory)
-    print(f"elapsed time: {time.time() - start_time} s")
-
-if render.getboolean("autoCover"):
-    start_time = time.time()
-    import autoImage
-    input_directory = "Illustration"
-
-    if not os.path.exists(cover_output_directory):
-        os.makedirs(cover_output_directory)
-
-    for file in os.listdir(input_directory):
-        if file.endswith(".png"):
-            print(file)
-            input_file_path = os.path.join(input_directory, file)
-            output_file_path = os.path.join(cover_output_directory, file)
-            autoImage.run(input_file_path, output_file_path)
     print(f"elapsed time: {time.time() - start_time} s")
 
 
