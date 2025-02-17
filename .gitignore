@@ -5,6 +5,8 @@ music/
 phira/
 chart/
 output/
+?.*.*
+*.json
 *.apk
 avatar.csv
 difficulty.csv
