@@ -41,11 +41,13 @@ if render.getboolean("autoUpdate"):
     apk_name = f"Phigros_{ver}.apk"
     if os.path.exists(apk_name):
         print("Apk exists, skip download")
-    else:
+    elif render.getboolean("autoDownload"):
         wget.download(r["data"]["apk"]["download"], apk_name)
-
-
-    apk_name = f"Phigros_{ver}.apk"
+    else:
+        print(r["data"]["apk"]["download"])
+        apk_name_input = input(f"Download the apk manually \nrename to {apk_name} or input apk_name \n")
+        if len(apk_name_input) > 0:
+            apk_name = apk_name_input
 else:
     apk_name = f"Phigros_{ver_now}.apk"
 
