@@ -1,4 +1,5 @@
 import math
+import sys
 import threading
 from base64 import b64encode, b64decode
 from io import BytesIO
@@ -168,3 +169,6 @@ def ban_threadtest_current_thread():
 webview.threading.current_thread = ban_threadtest_current_thread
 
 threading.Thread(target=lambda: webview.start(), daemon=True).start()
+
+if __name__ == "__main__":
+    run(sys.argv[1], sys.argv[2])

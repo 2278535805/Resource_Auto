@@ -10,7 +10,7 @@ def schartTask(dir, path):
 def sfileTask(dir, path, output):
     for file in os.listdir(path):
         if file.endswith(".pez"):
-            #command = f"--render {path}/{file}"
+            command = f"--render {os.path.join(path, file)} --output {output}"
             #makeTask(dir,command)
             makeOneTask(dir, os.path.join(path, file), output)
 
