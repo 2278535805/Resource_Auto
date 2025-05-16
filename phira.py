@@ -43,7 +43,7 @@ def create_file(id, info, levels, level, pbar):
 
     pbar.update(1)
 
-def run(nozip):
+def run(nozip: bool):
     levels = ["EZ", "HD", "IN", "AT"]
 
     shutil.rmtree("phira", True)

@@ -99,7 +99,7 @@ difficulty = ["AT", "IN", "HD", "EZ"]
 if not os.path.exists(output_directory):
         os.makedirs(output_directory)
 
-def pushRender(difficulty, output_directory):
+def pushRender(difficulty: str, output_directory: str):
     if render.getboolean(difficulty):
         input_folder = os.path.join("phira", difficulty)
         output_folder =os.path.join(output_directory, difficulty)

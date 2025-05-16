@@ -71,7 +71,7 @@ class ByteReader:
         return result
     
 
-def run(path):
+def run(path: str):
     env = Environment()
     with zipfile.ZipFile(path) as apk:
         with apk.open("assets/bin/Data/globalgamemanagers.assets") as f:

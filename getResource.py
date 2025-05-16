@@ -120,7 +120,7 @@ def save(key, entry, pbar):
         #queue_in.put((f"music/{name}.wav", obj.samples["music.wav"]))
         save_music(f"music/{name}.ogg", obj)
 
-def run(path, c):
+def run(path: str, c):
     global config
     config = c
     with ZipFile(path) as apk:

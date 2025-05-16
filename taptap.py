@@ -10,7 +10,7 @@ import wget
 
 sample = string.ascii_lowercase + string.digits
 
-def taptap(appid):
+def taptap(appid: int):
     uid = uuid.uuid4()
     #VN_CODE = 206012000, 281001004
     X_UA = "V=1&PN=TapTap&VN_CODE=281001004&LOC=CN&LANG=zh_CN&CH=default&UID=%s" % uid
