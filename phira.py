@@ -12,9 +12,6 @@ def create_zip_file(chdir, id, info, levels, level, pbar):
     num = ".0"
     if os.path.exists(f"{chdir}/Chart_{levels[level]}/{id}{num}.json"):
         with ZipFile(pez_filename, "w", compression=ZIP_DEFLATED) as pez:
-            pez.write(f"{chdir}/Chart_{levels[level]}/{id}{num}.json", f"{id}.json")
-            pez.write(f"{chdir}/Illustration/{id}{num}.png", f"{id}.png")
-            pez.write(f"{chdir}/music/{id}{num}.ogg", f"{id}.ogg")
             pez.writestr(
                 "info.txt",
                 "#\nName: %s\nSong: %s.ogg\nPicture: %s.png\nChart: %s.json\nLevel: %s  Lv.%s\nComposer: %s\nIllustrator: %s\nCharter: %s" % (
@@ -22,6 +19,10 @@ def create_zip_file(chdir, id, info, levels, level, pbar):
                     info["Composer"], info["Illustrator"], info["Chater"][level]
                 )
             )
+
+            pez.write(f"{chdir}/Chart_{levels[level]}/{id}{num}.json", f"{id}.json")
+            pez.write(f"{chdir}/Illustration/{id}{num}.png", f"{id}.png")
+            pez.write(f"{chdir}/music/{id}{num}.ogg", f"{id}.ogg")
     pbar.update(1)
 
 def create_file(chdir, id, info, levels, level, pbar):
@@ -30,9 +31,7 @@ def create_file(chdir, id, info, levels, level, pbar):
     dir_path = f"{chdir}/phira/{levels[level]}/{id}-{levels[level]}"
     num = ".0"
     os.makedirs(dir_path, exist_ok=True)
-    shutil.copy(f"{chdir}/Chart_{levels[level]}/{id}{num}.json", f"{dir_path}/{id}.json")
-    shutil.copy(f"{chdir}/Illustration/{id}{num}.png", f"{dir_path}/{id}.png")
-    shutil.copy(f"{chdir}/music/{id}{num}.ogg", f"{dir_path}/{id}.ogg")
+
     with open(f"{dir_path}/info.txt", "w") as f:
         f.write(
             "#\nName: %s\nSong: %s.ogg\nPicture: %s.png\nChart: %s.json\nLevel: %s  Lv.%s\nComposer: %s\nIllustrator: %s\nCharter: %s" % (
@@ -41,13 +40,18 @@ def create_file(chdir, id, info, levels, level, pbar):
             )
         )
 
+    shutil.copy(f"{chdir}/Chart_{levels[level]}/{id}{num}.json", f"{dir_path}/{id}.json")
+    shutil.copy(f"{chdir}/Illustration/{id}{num}.png", f"{dir_path}/{id}.png")
+    shutil.copy(f"{chdir}/music/{id}{num}.ogg", f"{dir_path}/{id}.ogg")
+
     pbar.update(1)
 
 def run(chdir: str, nozip: bool):
     levels = ["EZ", "HD", "IN", "AT"]
 
     shutil.rmtree("phira", True)
-    os.mkdir(os.path.join(chdir, "phira"))
+    if not os.path.exists(os.path.join(chdir, "phira")):
+        os.mkdir(os.path.join(chdir, "phira"))
     for level in levels:
         os.mkdir(f"{chdir}/phira/{level}")
 
