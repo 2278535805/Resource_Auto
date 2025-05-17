@@ -36,7 +36,7 @@ def makeTask(dir, root, file):
 def makeOneTask(dir, file, output):
     full_file = os.path.abspath(file)
     full_output = os.path.abspath(output)
-    command = f"\"{dir}\" --render {full_file} {full_output}"
+    command = f"\"{dir}\" --render {full_file} --output {full_output}"
     
     print(command)
     process = subprocess.Popen(command, shell=True, stdout=sys.stdout, stderr=sys.stderr)
