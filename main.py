@@ -102,7 +102,11 @@ if not os.path.exists(output_directory):
 def pushRender(difficulty: str, output_directory: str):
     if render.getboolean(difficulty):
         input_folder = os.path.join("phira", difficulty)
-        output_folder =os.path.join(output_directory, difficulty)
+
+        if not os.listdir(input_folder):
+            return
+    
+        output_folder = os.path.join(output_directory, difficulty)
         if not os.path.exists(output_folder):
             os.makedirs(output_folder)
         ttools.sfileTask(render.get("phiRender"), input_folder, output_folder)
