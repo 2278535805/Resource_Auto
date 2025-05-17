@@ -1,4 +1,5 @@
 import csv
+import os
 import struct
 import sys
 from UnityPy import Environment
@@ -71,7 +72,7 @@ class ByteReader:
         return result
     
 
-def run(path: str):
+def run(path: str, chdir: str):
     env = Environment()
     with zipfile.ZipFile(path) as apk:
         with apk.open("assets/bin/Data/globalgamemanagers.assets") as f:
@@ -137,12 +138,12 @@ def run(path: str):
     # print(difficulty)
     # print(info)
     
-    with open("difficulty.csv", "w", encoding="utf8", newline='') as f:
+    with open(os.path.join(chdir, 'difficulty.csv'), 'w', encoding='utf8', newline='') as f:
         writer = csv.writer(f)
         for i in difficulty:
             writer.writerow(i)
 
-    with open('info_new.csv', 'w', encoding='utf-8', newline='') as f:
+    with open(os.path.join(chdir, 'info_new.csv'), 'w', encoding='utf-8', newline='') as f:
         writer = csv.writer(f)
         for i in table:
             j = list(i)
@@ -153,7 +154,7 @@ def run(path: str):
                     j[1] = 'Another Me - KALPA'
             writer.writerow(j)
 
-    with open('info.csv', 'w', encoding='utf-8') as f:
+    with open(os.path.join(chdir, 'info.csv'), 'w', encoding='utf-8') as f:
         for i in info:
             f.write('\\'.join(i) + '\n')
     
@@ -165,7 +166,7 @@ def run(path: str):
             D[item["key"]][1] = item["index"]
         else:
             D[item["key"]] = [item["title"], item["index"]]
-    with open("collection.csv", "w", encoding="utf8") as f:
+    with open(os.path.join(chdir, 'collection.csv'), 'w', encoding='utf8') as f:
         for key, value in D.items():
             f.write("%s,%s,%s\n" % (key, value[0], value[1]))
     '''
@@ -190,17 +191,17 @@ def run(path: str):
         for item in table:
             f.write(item["id"])
             f.write("\n")'''
-    with open("avatar.csv", "w", encoding="utf8") as f:
+    with open(os.path.join(chdir, 'avatar.csv'), 'w', encoding='utf8') as f:
         for item in table:
             f.write("%s,%s\n" % (item["id"], item["file"][7:]))
     
 
 
     reader = ByteReader(tips[8:])
-    with open("tips.txt", "w", encoding="utf8") as f:
+    with open(os.path.join(chdir, 'tips.txt'), 'w', encoding='utf8') as f:
         for i in range(reader.readInt()):
             f.write(reader.readString())
             f.write("\n")
             
 if __name__=="__main__":
-    run(sys.argv[1])
+    run(sys.argv[1], os.getcwd())

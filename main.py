@@ -37,6 +37,7 @@ if render.getboolean("autoUpdate"):
 
     #r = taptap.taptap(165287)
     ver = r["data"]["apk"]["version_name"]
+    chdir = os.path.join(ver)
     #ver = "3.10.1"
     apk_name = f"Phigros_{ver}.apk"
     if os.path.exists(apk_name):
@@ -50,12 +51,16 @@ if render.getboolean("autoUpdate"):
             apk_name = apk_name_input
 else:
     apk_name = f"Phigros_{ver_now}.apk"
+    chdir = os.path.join(ver_now)
 
-gameInformation.run(apk_name)
+if not os.path.exists(chdir):
+    os.makedirs(chdir)
+
+gameInformation.run(apk_name, chdir)
 
 
 start_time = time.time()
-getResource.run(apk_name, {
+getResource.run(apk_name, chdir, {
     "avatar": types.getboolean("avatar"),
     "Chart": types.getboolean("Chart"),
     "IllustrationBlur": types.getboolean("illustrationBlur"),
@@ -71,17 +76,17 @@ getResource.run(apk_name, {
 print(f"elapsed time: {time.time() - start_time} s")
 
 start_time = time.time()
-phira.run(False)
+phira.run(chdir, False)
 print(f"elapsed time: {time.time() - start_time} s")
 
 
-output_directory = os.path.join("output")
+output_directory = os.path.join(chdir, "output")
 cover_output_directory = os.path.join(output_directory, "Cover")
 
 if render.getboolean("autoCover"):
     start_time = time.time()
     import autoImage
-    input_directory = "Illustration"
+    input_directory = os.path.join(chdir, "Illustration")
 
     if not os.path.exists(cover_output_directory):
         os.makedirs(cover_output_directory)
@@ -101,9 +106,9 @@ if not os.path.exists(output_directory):
 
 def pushRender(difficulty: str, output_directory: str):
     if render.getboolean(difficulty):
-        input_folder = os.path.join("phira", difficulty)
+        input_folder = os.path.join(chdir, "phira", difficulty)
 
-        if not os.listdir(input_folder):
+        if not os.path.exists(input_folder) or not os.listdir(input_folder):
             return
     
         output_folder = os.path.join(output_directory, difficulty)

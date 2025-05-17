@@ -71,38 +71,38 @@ def save_music(path, music: AudioClip):
 
 classes = ClassIDType.TextAsset, ClassIDType.Sprite, ClassIDType.AudioClip
 
-def save(key, entry, pbar):
+def save(chdir, key, entry, pbar):
     obj = next(entry.get_filtered_objects(classes)).read()
     if config["avatar"] and key.startswith("avatar."):
         key = key[7:] if key != "Cipher1" else avatar.get(key[7:], key)
         pbar.set_postfix_str(key)
         bytesIO = BytesIO()
         obj.image.save(bytesIO, "png")
-        queue_in.put((f"avatar/{key}.png", bytesIO))
+        queue_in.put((f"{chdir}/avatar/{key}.png", bytesIO))
     elif config["Chart"] and key[-14:-7] == "/Chart_" and key[-5:] == ".json":
         name = key[:-14]
         file_name = (name[:17] + '...') if len(name) > 20 else name
         pbar.set_postfix_str(file_name)
-        queue_in.put(("Chart_%s/%s.json" % (key[-7:-5], name), obj.script))
+        queue_in.put((f"{chdir}/Chart_%s/%s.json" % (key[-7:-5], name), obj.script))
     elif config["Chart"] and key[-18:-11] == "/Chart_" and key[-5:] == ".json":
         name = key[:-18]
         file_name = (name[:17] + '...') if len(name) > 20 else name
         pbar.set_postfix_str(file_name)
-        queue_in.put(("Chart_%s/%s.json" % (key[-11:-5], name), obj.script))
+        queue_in.put((f"{chdir}/Chart_%s/%s.json" % (key[-11:-5], name), obj.script))
     elif config["IllustrationBlur"] and key.endswith("/IllustrationBlur.jpg"):
         bytesIO = BytesIO()
         obj.image.save(bytesIO, "png")
         name = key[:-21]
         file_name = (name[:17] + '...') if len(name) > 20 else name
         pbar.set_postfix_str(file_name)
-        queue_in.put((f"IllustrationBlur/{name}.png", bytesIO))
+        queue_in.put((f"{chdir}/IllustrationBlur/{name}.png", bytesIO))
     elif config["IllustrationLowRes"] and key.endswith("/IllustrationLowRes.jpg"):
         name = key[:-23]
         file_name = (name[:17] + '...') if len(name) > 20 else name
         pbar.set_postfix_str(file_name)
         bytesIO = BytesIO()
         obj.image.save(bytesIO, "png")
-        queue_in.put((f"IllustrationLowRes/{name}.png", bytesIO))
+        queue_in.put((f"{chdir}/IllustrationLowRes/{name}.png", bytesIO))
         #pool.submit(save_image, f"IllustrationLowRes/{name}.png", obj.image)
     elif config["Illustration"] and key.endswith("/Illustration.jpg"):
         name = key[:-17]
@@ -110,7 +110,7 @@ def save(key, entry, pbar):
         pbar.set_postfix_str(file_name)
         bytesIO = BytesIO()
         obj.image.save(bytesIO, "png")
-        queue_in.put((f"Illustration/{name}.png", bytesIO))
+        queue_in.put((f"{chdir}/Illustration/{name}.png", bytesIO))
         #pool.submit(save_image, f"Illustration/{name}.png", obj.image)
     elif config["music"] and key.endswith("/music.wav"):
         name = key[:-10]
@@ -118,9 +118,9 @@ def save(key, entry, pbar):
         pbar.set_postfix_str(file_name)
         #pool.submit(save_music, f"music/{name}.ogg", obj)
         #queue_in.put((f"music/{name}.wav", obj.samples["music.wav"]))
-        save_music(f"music/{name}.ogg", obj)
+        save_music(f"{chdir}/music/{name}.ogg", obj)
 
-def run(path: str, c):
+def run(path: str, chdir: str, c):
     global config
     config = c
     with ZipFile(path) as apk:
@@ -129,8 +129,8 @@ def run(path: str, c):
 
     type_list = ["avatar", "Chart_Legacy", "Chart_EZ", "Chart_HD", "Chart_IN", "Chart_AT", "IllustrationBlur", "IllustrationLowRes", "Illustration", "music"]
     for directory in filter(lambda x: getbool(x), type_list):
-        shutil.rmtree(directory, True)
-        os.mkdir(directory)
+        shutil.rmtree(os.path.join(chdir, directory), True)
+        os.mkdir(os.path.join(chdir, directory))
 
     key = base64.b64decode(data["m_KeyDataString"])
     bucket = base64.b64decode(data["m_BucketDataString"])
@@ -170,7 +170,7 @@ def run(path: str, c):
 
     global avatar
     if config["avatar"]:
-        with open("avatar.csv", encoding="utf8") as f:
+        with open(os.path.join(chdir, "avatar.csv"), encoding="utf8") as f:
             avatar = dict(line.strip().split(",")[:2] for line in f)
 
     thread = threading.Thread(target=io)
@@ -190,16 +190,16 @@ def run(path: str, c):
                         queue_in.put(batch)
                         env = queue_out.get()
                         for ikey, ientry in env.files.items():
-                            save(ikey, ientry, pbar)
+                            save(chdir, ikey, ientry, pbar)
                         size = 0
                         batch = [apk]
                 queue_in.put(batch)
                 env = queue_out.get()
                 for ikey, ientry in env.files.items():
-                    save(ikey, ientry, pbar)
+                    save(chdir, ikey, ientry, pbar)
         else:
             l = []
-            with open("difficulty.csv", encoding="utf8") as f:
+            with open(os.path.join(chdir, "difficulty.csv"), encoding="utf8") as f:
                 line = f.readline()
                 while line:
                     l.append(line.split(",", 2)[0])
@@ -222,7 +222,7 @@ def run(path: str, c):
                             env.load_file(apk.read(f"assets/aa/Android/{entry}"), name=key)
                 with tqdm(env.files.items(), desc="Extract") as pbar:
                     for ikey, ientry in pbar:
-                        save(ikey, ientry, pbar)
+                        save(chdir, ikey, ientry, pbar)
 
     queue_in.put(None)
     thread.join()
@@ -231,7 +231,7 @@ if __name__ == "__main__":
     c = ConfigParser()
     c.read("config.ini", encoding="utf8")
     types = c["TYPES"]
-    run(sys.argv[1], {
+    run(sys.argv[1], os.getcwd(), {
         "avatar": types.getboolean("avatar"),
         "Chart": types.getboolean("Chart"),
         "IllustrationBlur": types.getboolean("illustrationBlur"),
