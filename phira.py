@@ -49,9 +49,8 @@ def create_file(chdir, id, info, levels, level, pbar):
 def run(chdir: str, nozip: bool):
     levels = ["EZ", "HD", "IN", "AT"]
 
-    shutil.rmtree("phira", True)
-    if not os.path.exists(os.path.join(chdir, "phira")):
-        os.mkdir(os.path.join(chdir, "phira"))
+    shutil.rmtree(os.path.join(chdir, "phira"), True)
+    os.mkdir(os.path.join(chdir, "phira"))
     for level in levels:
         os.mkdir(f"{chdir}/phira/{level}")
 
