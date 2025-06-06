@@ -1,3 +1,4 @@
+import datetime
 import wget
 from configparser import ConfigParser
 import os
@@ -13,12 +14,23 @@ import ttools
 c = ConfigParser()
 c.read("config.ini", "utf8")
 types = c["TYPES"]
-render = c["SETTING"]
+update = c["UPDATE"]
+setting = c["SETTING"]
 
 
-ver_now = input("请输入当前版本号:")
+ver_now = input("now version: ")
 
-if render.getboolean("autoUpdate"):
+target_time = setting.get("triggerTime")
+if not (target_time is None or len(target_time) == 0):
+    target_time = datetime.datetime.strptime(target_time, "%Y-%m-%d %H:%M:%S")
+
+    while datetime.datetime.now() < target_time:
+        print("waiting for trigger time", target_time, end="\r")
+        time.sleep(1)
+    else:
+        print()
+
+if setting.getboolean("autoUpdate"):
     times = 0
     r = taptap.taptap(165287)
     print(f"TapTap: {r["data"]["apk"]["version_name"]} ({times})", end="\r")
@@ -26,7 +38,7 @@ if render.getboolean("autoUpdate"):
 
     while ver_now == r["data"]["apk"]["version_name"]:
         times += 1
-        time.sleep(10)
+        time.sleep(1)
         try:
             r = taptap.taptap(165287)
             print(f"TapTap: {r["data"]["apk"]["version_name"]} ({times})")
@@ -42,7 +54,7 @@ if render.getboolean("autoUpdate"):
     apk_name = f"Phigros_{ver}.apk"
     if os.path.exists(apk_name):
         print("Apk exists, skip download")
-    elif render.getboolean("autoDownload"):
+    elif setting.getboolean("autoDownload"):
         wget.download(r["data"]["apk"]["download"], apk_name)
     else:
         print(r["data"]["apk"]["download"])
@@ -68,9 +80,9 @@ getResource.run(apk_name, chdir, {
     "Illustration": types.getboolean("illustration"),
     "music": types.getboolean("music"),
     "UPDATE": {
-        "main_story": c["UPDATE"].getint("main_story"),
-        "side_story": c["UPDATE"].getint("side_story"),
-        "other_song": c["UPDATE"].getint("other_song")
+        "main_story": update.getint("main_story"),
+        "side_story": update.getint("side_story"),
+        "other_song": update.getint("other_song")
     }
 })
 print(f"elapsed time: {time.time() - start_time} s")
@@ -83,7 +95,7 @@ print(f"elapsed time: {time.time() - start_time} s")
 output_directory = os.path.join(chdir, "output")
 cover_output_directory = os.path.join(output_directory, "Cover")
 
-if render.getboolean("autoCover"):
+if setting.getboolean("autoCover"):
     start_time = time.time()
     import autoImage
     input_directory = os.path.join(chdir, "Illustration")
@@ -105,7 +117,7 @@ if not os.path.exists(output_directory):
         os.makedirs(output_directory)
 
 def pushRender(difficulty: str, output_directory: str):
-    if render.getboolean(difficulty):
+    if setting.getboolean(difficulty):
         input_folder = os.path.join(chdir, "phira", difficulty)
 
         if not os.path.exists(input_folder) or not os.listdir(input_folder):
@@ -114,9 +126,9 @@ def pushRender(difficulty: str, output_directory: str):
         output_folder = os.path.join(output_directory, difficulty)
         if not os.path.exists(output_folder):
             os.makedirs(output_folder)
-        ttools.sfileTask(render.get("phiRender"), input_folder, output_folder)
+        ttools.sfileTask(setting.get("phiRender"), input_folder, output_folder)
 
-if render.getboolean("autoRender"):
+if setting.getboolean("autoRender"):
     start_time = time.time()
     pushRender(difficulty[0], output_directory)
     pushRender(difficulty[1], output_directory)
