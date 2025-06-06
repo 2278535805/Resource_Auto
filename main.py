@@ -55,7 +55,9 @@ if setting.getboolean("autoUpdate"):
     if os.path.exists(apk_name):
         print("Apk exists, skip download")
     elif setting.getboolean("autoDownload"):
+        start_time = time.time()
         wget.download(r["data"]["apk"]["download"], apk_name)
+        print(f"elapsed time: {time.time() - start_time} s")
     else:
         print(r["data"]["apk"]["download"])
         apk_name_input = input(f"Download the apk manually \nrename to {apk_name} or input apk_name \n")
