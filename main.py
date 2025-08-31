@@ -89,6 +89,10 @@ getResource.run(apk_name, chdir, {
 })
 print(f"elapsed time: {time.time() - start_time} s")
 
+if setting.getboolean("pause"):
+    print(f"{os.getcwd()}\\{chdir}")
+    input("Press Enter to continue...")
+
 start_time = time.time()
 phira.run(chdir, False)
 print(f"elapsed time: {time.time() - start_time} s")
