@@ -9,6 +9,7 @@ import gameInformation
 import getResource
 import phira
 import ttools
+import pyperclip
 
 
 c = ConfigParser()
@@ -60,7 +61,10 @@ if setting.getboolean("autoUpdate"):
         print(f"elapsed time: {time.time() - start_time} s")
     else:
         print(r["data"]["apk"]["download"])
-        apk_name_input = input(f"Download the apk manually \nrename to {apk_name} or input apk_name \n")
+        file = f"{os.getcwd()}\\{apk_name}"
+        print(file)
+        pyperclip.copy(file)
+        apk_name_input = input(f"Download the apk manually \nrename to {apk_name} or input apk_name: \n")
         if len(apk_name_input) > 0:
             apk_name = apk_name_input
 else:
