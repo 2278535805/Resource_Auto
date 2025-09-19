@@ -1,7 +1,7 @@
 import os
 import shutil
 from zipfile import ZipFile, ZIP_STORED, ZIP_DEFLATED
-import csv
+import json
 from concurrent.futures import ThreadPoolExecutor
 from tqdm import tqdm
 
@@ -54,17 +54,26 @@ def run(chdir: str, nozip: bool):
     for level in levels:
         os.mkdir(f"{chdir}/phira/{level}")
 
+    raw_infos = {}
+    with open(os.path.join(chdir, "info.json"), encoding="utf8") as f:
+        raw_infos = json.load(f)
     infos = {}
-    with open(os.path.join(chdir, "info.csv"), encoding="utf8") as f:
-        reader = csv.reader(f, delimiter='\\')
-        for line in reader:
-            infos[line[0]] = {"Name": line[1], "Composer": line[2], "Illustrator": line[3], "Chater": line[4:]}
+    for item in raw_infos:
+        song_id = item[0]
+        infos[song_id] = {
+            "Name": item[1],
+            "Composer": item[2],
+            "Illustrator": item[3],
+            "Chater": item[4:]
+        }
 
-    with open(os.path.join(chdir, "difficulty.csv"), encoding="utf8") as f:
-        reader = csv.reader(f)
-        for line in reader:
-            if line[0] in infos:
-                infos[line[0]]["difficulty"] = line[1:]
+    with open(os.path.join(chdir, "difficulty.json"), encoding="utf8") as f:
+        difficulty_data = json.load(f)
+
+    for item in difficulty_data:
+        song_id = item[0]
+        if song_id in infos:
+            infos[song_id]["difficulty"] = item[1:]
 
     tasks = [(id, info, levels, level) for id, info in infos.items() for level in range(len(info["difficulty"]))]
     if nozip:

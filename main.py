@@ -74,7 +74,7 @@ else:
 if not os.path.exists(chdir):
     os.makedirs(chdir)
 
-gameInformation.run(apk_name, chdir)
+gameInformation.run(apk_name, chdir, bool(setting.getboolean("outputCsv")))
 
 
 start_time = time.time()

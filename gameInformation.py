@@ -1,4 +1,5 @@
 import csv
+import json
 import os
 import struct
 import sys
@@ -72,7 +73,7 @@ class ByteReader:
         return result
     
 
-def run(path: str, chdir: str):
+def run(path: str, chdir: str, outputCsv: bool = False):
     env = Environment()
     with zipfile.ZipFile(path) as apk:
         with apk.open("assets/bin/Data/globalgamemanagers.assets") as f:
@@ -137,26 +138,22 @@ def run(path: str, chdir: str):
 
     # print(difficulty)
     # print(info)
-    
-    with open(os.path.join(chdir, 'difficulty.csv'), 'w', encoding='utf8', newline='') as f:
-        writer = csv.writer(f)
-        for i in difficulty:
-            writer.writerow(i)
 
-    with open(os.path.join(chdir, 'info_new.csv'), 'w', encoding='utf-8', newline='') as f:
-        writer = csv.writer(f)
-        for i in table:
-            j = list(i)
-            if 'Another Me' in i[1]:
-                if 'NeutralMoon' in i[0]:
-                    j[1] = 'Another Me - Rising Sun Traxx'
-                else:
-                    j[1] = 'Another Me - KALPA'
-            writer.writerow(j)
+    with open(os.path.join(chdir, 'difficulty.json'), 'w', encoding='utf8', newline='') as f:
+        json.dump(difficulty, f, ensure_ascii=False, indent=4)
 
-    with open(os.path.join(chdir, 'info.csv'), 'w', encoding='utf-8') as f:
-        for i in info:
-            f.write('\\'.join(i) + '\n')
+    with open(os.path.join(chdir, 'info.json'), 'w', encoding='utf-8', newline='') as f:
+        json.dump(info, f, ensure_ascii=False, indent=4)
+
+    if outputCsv:
+        with open(os.path.join(chdir, 'difficulty.csv'), 'w', encoding='utf8', newline='') as f:
+            writer = csv.writer(f, delimiter='\t')
+            for i in difficulty:
+                writer.writerow(i)
+        with open(os.path.join(chdir, 'info.csv'), 'w', encoding='utf-8') as f:
+            writer = csv.writer(f, delimiter='\t')
+            for i in info:
+                writer.writerow(i)
     
     reader = ByteReader(collection)
     collection_schema = {1: (int, int, int, str, str, str), "key": str, "index": int, 2: (int,), "title": str, 3: (str, str, str, str)}
@@ -166,9 +163,8 @@ def run(path: str, chdir: str):
             D[item["key"]][1] = item["index"]
         else:
             D[item["key"]] = [item["title"], item["index"]]
-    with open(os.path.join(chdir, 'collection.csv'), 'w', encoding='utf8') as f:
-        for key, value in D.items():
-            f.write("%s,%s,%s\n" % (key, value[0], value[1]))
+    with open(os.path.join(chdir, 'collection.json'), 'w', encoding='utf8') as f:
+        json.dump(D, f, ensure_ascii=False, indent=4)
     '''
     key_schema = {"key": str, "a": int, "type": int, "b": int}
     single = []
@@ -191,9 +187,10 @@ def run(path: str, chdir: str):
         for item in table:
             f.write(item["id"])
             f.write("\n")'''
-    with open(os.path.join(chdir, 'avatar.csv'), 'w', encoding='utf8') as f:
-        for item in table:
-            f.write("%s,%s\n" % (item["id"], item["file"][7:]))
+    
+    with open(os.path.join(chdir, 'avatar.json'), 'w', encoding='utf8') as f:
+        table = [{"id": item["id"], "file": item["file"][7:]} for item in table]
+        json.dump(table, f, ensure_ascii=False, indent=4)
     
 
 

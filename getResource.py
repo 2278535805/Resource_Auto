@@ -170,8 +170,8 @@ def run(path: str, chdir: str, c):
 
     global avatar
     if config["avatar"]:
-        with open(os.path.join(chdir, "avatar.csv"), encoding="utf8") as f:
-            avatar = dict(line.strip().split(",")[:2] for line in f)
+        with open(os.path.join(chdir, "avatar.json"), encoding="utf8") as f:
+            avatar = json.load(f)
 
     thread = threading.Thread(target=io)
     thread.start()
@@ -199,17 +199,15 @@ def run(path: str, chdir: str, c):
                     save(chdir, ikey, ientry, pbar)
         else:
             l = []
-            with open(os.path.join(chdir, "difficulty.csv"), encoding="utf8") as f:
-                line = f.readline()
-                while line:
-                    l.append(line.split(",", 2)[0])
-                    line = f.readline()
-            index1 = l.index("Doppelganger.LeaF")
-            index2 = l.index("Poseidon.1112vsStar")
+            with open(os.path.join(chdir, "difficulty.json"), encoding="utf8") as f:
+                l = json.load(f)
+            lName = [item[0] for item in l]
+            index1 = lName.index("Doppelganger.LeaF")
+            index2 = lName.index("Poseidon.1112vsStar")
             # index1 = l.index("ENERGYSYNERGYMATRIX.Tanchiky") + 1 # 指定导出
-            del l[index2:len(l) - config["UPDATE"]["side_story"]] 
-            del l[index1:index2 - config["UPDATE"]["other_song"]] 
-            del l[:index1 - config["UPDATE"]["main_story"]]
+            del lName[index2:len(l) - config["UPDATE"]["side_story"]] 
+            del lName[index1:index2 - config["UPDATE"]["other_song"]] 
+            del lName[:index1 - config["UPDATE"]["main_story"]]
 
             env = Environment()
             with ZipFile(path) as apk:
@@ -218,7 +216,7 @@ def run(path: str, chdir: str, c):
                     for key, entry in pbar:
                         if key.startswith("avatar."):
                             env.load_file(apk.read(f"assets/aa/Android/{entry}"), name=key)
-                        if any(key.startswith(f"{id}") for id in l):
+                        if any(key.startswith(f"{id}") for id in lName):
                             env.load_file(apk.read(f"assets/aa/Android/{entry}"), name=key)
                 with tqdm(env.files.items(), desc="Extract") as pbar:
                     for ikey, ientry in pbar:
