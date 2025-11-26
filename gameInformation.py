@@ -5,6 +5,7 @@ import struct
 import sys
 from UnityPy import Environment
 import zipfile
+import typing
 
 
 class AvatarInfo:
@@ -67,6 +68,7 @@ class ByteReader:
                 elif type(value) == dict:
                     item[key] = self.readSchema(value)
                 else:
+                    print(value)
                     raise Exception("无")
                 # print(key, item[key])
             result.append(item)
@@ -105,17 +107,21 @@ def run(path: str, chdir: str, outputCsv: bool = False):
         "charter": [str], 
         "composer": str, 
         "levels": [str], 
-        "previewTimeStart": float, 
+        "previewTime": float, 
         "previewTimeEnd": float, 
-        "unlockList": {
+        "unlockInfo": {
             "unlockType": int, 
             "unlockInfo": [str]
         }, 
         "levelMods": {
             "n": [str], 
-            "magic": int
         }, 
-        "magic": int
+        "isCnLimited": bool,
+        "hasDifferentMusic": bool,
+        "differentMusic": int,
+        "previewClipDifficulty": int,
+        "hasDifferentCover": bool,
+        "differentCover": int
     }
     difficulty = []
     table = []

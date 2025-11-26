@@ -23,6 +23,14 @@ def create_zip_file(chdir, id, info, levels, level, pbar):
             pez.write(f"{chdir}/Chart_{levels[level]}/{id}{num}.json", f"{id}.json")
             pez.write(f"{chdir}/Illustration/{id}{num}.png", f"{id}.png")
             pez.write(f"{chdir}/music/{id}{num}.ogg", f"{id}.ogg")
+            if os.path.exists(f"{chdir}/music/{id}{num}_EZ.ogg"):
+                pez.write(f"{chdir}/music/{id}{num}_EZ.ogg", f"{id}_EZ.ogg")
+            if os.path.exists(f"{chdir}/music/{id}{num}_HD.ogg"):
+                pez.write(f"{chdir}/music/{id}{num}_HD.ogg", f"{id}_HD.ogg")
+            if os.path.exists(f"{chdir}/music/{id}{num}_IN.ogg"):
+                pez.write(f"{chdir}/music/{id}{num}_IN.ogg", f"{id}_IN.ogg")
+            if os.path.exists(f"{chdir}/music/{id}{num}_AT.ogg"):
+                pez.write(f"{chdir}/music/{id}{num}_AT.ogg", f"{id}_AT.ogg")
     pbar.update(1)
 
 def create_file(chdir, id, info, levels, level, pbar):

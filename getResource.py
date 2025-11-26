@@ -112,6 +112,14 @@ def save(chdir, key, entry, pbar):
         obj.image.save(bytesIO, "png")
         queue_in.put((f"{chdir}/Illustration/{name}.png", bytesIO))
         #pool.submit(save_image, f"Illustration/{name}.png", obj.image)
+    elif config["Illustration"] and key[-20:-6] == "/Illustration_" and key[-4:] == ".jpg":
+        name = key[:-20]
+        level = key[-6:-4]
+        file_name = (name[:17] + '...') if len(name) > 20 else name
+        pbar.set_postfix_str(file_name)
+        bytesIO = BytesIO()
+        obj.image.save(bytesIO, "png")
+        queue_in.put((f"{chdir}/Illustration/{name}_{level}.png", bytesIO))
     elif config["music"] and key.endswith("/music.wav"):
         name = key[:-10]
         file_name = (name[:17] + '...') if len(name) > 20 else name
@@ -119,6 +127,12 @@ def save(chdir, key, entry, pbar):
         #pool.submit(save_music, f"music/{name}.ogg", obj)
         #queue_in.put((f"music/{name}.wav", obj.samples["music.wav"]))
         save_music(f"{chdir}/music/{name}.ogg", obj)
+    elif config["music"] and key[-13:-6] == "/music_" and key[-4:] == ".wav":
+        name = key[:-13]
+        level = key[-6:-4]
+        file_name = (name[:17] + '...') if len(name) > 20 else name
+        pbar.set_postfix_str(file_name)
+        save_music(f"{chdir}/music/{name}_{level}.ogg", obj)
 
 def run(path: str, chdir: str, c):
     global config
