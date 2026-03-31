@@ -251,6 +251,17 @@ def run(path: str, chdir: str, c):
     queue_in.put(None)
     thread.join()
 
+    print("Remove empty folder:")
+    for root, dirs, files in os.walk(chdir, topdown=False):
+        for dir_name in dirs:
+            dir_path = os.path.join(root, dir_name)
+            try:
+                if not os.listdir(dir_path):
+                    os.rmdir(dir_path)
+                    print(f"    {dir_path}")
+            except OSError as e:
+                print(f"    Failed to remove {dir_path}: {e}")
+
 if __name__ == "__main__":
     c = ConfigParser()
     c.read("config.ini", encoding="utf8")
