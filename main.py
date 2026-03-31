@@ -85,6 +85,7 @@ getResource.run(apk_name, chdir, {
     "IllustrationLowRes": types.getboolean("illustrationLowRes"),
     "Illustration": types.getboolean("illustration"),
     "music": types.getboolean("music"),
+    "deduplicate": types.get("deduplicate"),
     "UPDATE": {
         "main_story": update.getint("main_story"),
         "side_story": update.getint("side_story"),

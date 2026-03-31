@@ -181,6 +181,18 @@ def run(path: str, chdir: str, c):
             del table[i]
         elif table[i][0][:14] == "Assets/Tracks/":
             table[i][0] = table[i][0][14:]
+    
+    with open(os.path.join(chdir, 'table.json'), 'w', encoding='utf8', newline='') as f:
+        json.dump(table, f, ensure_ascii=False, indent=4)
+
+    if type(config["deduplicate"]) == str and len(config["deduplicate"]) > 0:
+        with open(os.path.join(chdir, config["deduplicate"]), encoding="utf8") as f:
+            deduplicate = json.load(f)
+        excluded_paths = [item[0] for item in deduplicate]
+        table = [item for item in table if item[0] not in excluded_paths]
+        print(f"Excluded {len(deduplicate)} items based on deduplication list. Remaining items: {len(table)}")
+        with open(os.path.join(chdir, 'table_deduplicate.json'), 'w', encoding='utf8', newline='') as f:
+            json.dump(table, f, ensure_ascii=False, indent=4)
 
     global avatar
     if config["avatar"]:
@@ -250,6 +262,7 @@ if __name__ == "__main__":
         "IllustrationLowRes": types.getboolean("illustrationLowRes"),
         "Illustration": types.getboolean("illustration"),
         "music": types.getboolean("music"),
+        "deduplicate": types.get("deduplicate"),
         "UPDATE": {
             "main_story": c["UPDATE"].getint("main_story"),
             "side_story": c["UPDATE"].getint("side_story"),
