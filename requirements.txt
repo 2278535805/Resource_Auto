@@ -1,0 +1,7 @@
+wget
+UnityPy==1.10.18
+tqdm
+fsb5
+pyperclip
+pywebview
+pythonnet>=3.1.0

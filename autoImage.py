@@ -1,4 +1,5 @@
 import math
+import signal
 import sys
 import threading
 from base64 import b64encode, b64decode
@@ -126,6 +127,34 @@ def im2b64(im: Image.Image):
     im.save(io, format="png")
     return b64encode(io.getvalue()).decode()
 
+_webview_started = threading.Event()
+
+_original_signal = signal.signal
+def _patched_signal(sig, handler):
+    try:
+        return _original_signal(sig, handler)
+    except ValueError:
+        return signal.SIG_DFL
+signal.signal = _patched_signal
+
+def _start_webview():
+    try:
+        webview.start()
+    except Exception:
+        pass
+    _webview_started.set()
+
+wv = webview.create_window("Auto_Image_TempWindow", hidden=True)
+
+current_thread = threading.current_thread
+def ban_threadtest_current_thread():
+    obj = current_thread()
+    obj.name = "MainThread"
+    return obj
+webview.threading.current_thread = ban_threadtest_current_thread
+
+threading.Thread(target=_start_webview, daemon=True).start()
+
 def run(ipt: str, opt: str):
     im = Image.open(ipt)
     r = im.width / im.height
@@ -149,7 +178,7 @@ def run(ipt: str, opt: str):
     blurim = im.filter(ImageFilter.GaussianBlur((im.width + im.height) * BLUR_R))
     blurb64 = im2b64(blurim)
     
-    wv.evaluate_js("null;") # wait to load
+    wv.evaluate_js("null;")
     wv.evaluate_js(MAIN_JS.replace("%INPUT_IMG%", imb64).replace("%INPUT_BLUR%", blurb64))
     
     while True:
@@ -158,17 +187,6 @@ def run(ipt: str, opt: str):
     
     with open(opt, "wb") as f:
         f.write(b64decode(result.split(",")[1]))
-
-wv = webview.create_window("Auto_Image_TempWindow", hidden=True)
-
-current_thread = threading.current_thread
-def ban_threadtest_current_thread():
-    obj = current_thread()
-    obj.name = "MainThread"
-    return obj
-webview.threading.current_thread = ban_threadtest_current_thread
-
-threading.Thread(target=lambda: webview.start(), daemon=True).start()
 
 if __name__ == "__main__":
     run(sys.argv[1], sys.argv[2])
