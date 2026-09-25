@@ -43,7 +43,9 @@ def io():
         elif isinstance(item, list):
             env = Environment()
             for i in range(1, len(item)):
-                env.load_file(item[0].read(f"assets/aa/Android/{item[i][1]}"), name=item[i][0])
+                entry = item[i][1]
+                entry = entry.split("_", 1)[1] if "_" in entry else entry
+                env.load_file(item[0].read(f"assets/aa/Android/{entry}"), name=item[i][0])
             queue_out.put(env)
             del env
         else:
@@ -211,6 +213,7 @@ def run(path: str, chdir: str, c):
                 pbar = tqdm(table, desc="Extract")
                 for key, entry in pbar:
                     batch.append((key, entry, pbar))
+                    entry = entry.split("_", 1)[1] if "_" in entry else entry
                     size += apk.getinfo(f"assets/aa/Android/{entry}").file_size
                     if size > 32 * 1024 * 1024:
                         queue_in.put(batch)
@@ -240,6 +243,7 @@ def run(path: str, chdir: str, c):
                 # pbar = tqdm(table, desc="Extract")
                 with tqdm(table, desc="FindChart") as pbar:
                     for key, entry in pbar:
+                        entry = entry.split("_", 1)[1] if "_" in entry else entry
                         if key.startswith("avatar."):
                             env.load_file(apk.read(f"assets/aa/Android/{entry}"), name=key)
                         if any(key.startswith(f"{id}") for id in lName):
