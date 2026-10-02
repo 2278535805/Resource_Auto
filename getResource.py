@@ -143,7 +143,7 @@ def run(path: str, chdir: str, c):
         with apk.open("assets/aa/catalog.json") as f:
             data = json.load(f)
 
-    type_list = ["avatar", "Chart_Legacy", "Chart_EZ", "Chart_HD", "Chart_IN", "Chart_AT", "IllustrationBlur", "IllustrationLowRes", "Illustration", "music"]
+    type_list = ["avatar", "Chart_Legacy", "Chart_EZ", "Chart_HD", "Chart_IN", "Chart_AT", "Chart_SP", "IllustrationBlur", "IllustrationLowRes", "Illustration", "music"]
     for directory in filter(lambda x: getbool(x), type_list):
         shutil.rmtree(os.path.join(chdir, directory), True)
         os.mkdir(os.path.join(chdir, directory))
