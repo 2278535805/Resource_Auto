@@ -1,3 +1,4 @@
+import atexit
 import math
 import signal
 import sys
@@ -153,7 +154,21 @@ def ban_threadtest_current_thread():
     return obj
 webview.threading.current_thread = ban_threadtest_current_thread
 
-threading.Thread(target=_start_webview, daemon=True).start()
+_webview_thread = threading.Thread(target=_start_webview, daemon=True)
+_webview_thread.start()
+
+def _stop_webview():
+    if not _webview_thread.is_alive():
+        return
+    try:
+        wv.destroy()
+    except Exception:
+        pass
+    _webview_thread.join(20)
+
+if hasattr(threading, "_register_atexit"):
+    threading._register_atexit(_stop_webview)
+atexit.register(_stop_webview)
 
 def run(ipt: str, opt: str):
     im = Image.open(ipt)
