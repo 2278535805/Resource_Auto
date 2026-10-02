@@ -21,16 +21,15 @@ def create_zip_file(chdir, id, info, levels, level, pbar):
             )
 
             pez.write(f"{chdir}/Chart_{levels[level]}/{id}{num}.json", f"{id}.json")
-            pez.write(f"{chdir}/Illustration/{id}{num}.png", f"{id}.png")
-            pez.write(f"{chdir}/music/{id}{num}.ogg", f"{id}.ogg")
-            if os.path.exists(f"{chdir}/music/{id}{num}_EZ.ogg"):
-                pez.write(f"{chdir}/music/{id}{num}_EZ.ogg", f"{id}_EZ.ogg")
-            if os.path.exists(f"{chdir}/music/{id}{num}_HD.ogg"):
-                pez.write(f"{chdir}/music/{id}{num}_HD.ogg", f"{id}_HD.ogg")
-            if os.path.exists(f"{chdir}/music/{id}{num}_IN.ogg"):
-                pez.write(f"{chdir}/music/{id}{num}_IN.ogg", f"{id}_IN.ogg")
-            if os.path.exists(f"{chdir}/music/{id}{num}_AT.ogg"):
-                pez.write(f"{chdir}/music/{id}{num}_AT.ogg", f"{id}_AT.ogg")
+            if os.path.exists(f"{chdir}/Illustration/{id}{num}_{levels[level]}.png"):
+                pez.write(f"{chdir}/Illustration/{id}{num}_{levels[level]}.png", f"{id}.png")
+            elif os.path.exists(f"{chdir}/Illustration/{id}{num}.png"):
+                pez.write(f"{chdir}/Illustration/{id}{num}.png", f"{id}.png")
+
+            if os.path.exists(f"{chdir}/music/{id}{num}_{levels[level]}.ogg"):
+                pez.write(f"{chdir}/music/{id}{num}_{levels[level]}.ogg", f"{id}.ogg")
+            elif os.path.exists(f"{chdir}/music/{id}{num}.ogg"):
+                pez.write(f"{chdir}/music/{id}{num}.ogg", f"{id}.ogg")
     pbar.update(1)
 
 def create_file(chdir, id, info, levels, level, pbar):
@@ -49,8 +48,15 @@ def create_file(chdir, id, info, levels, level, pbar):
         )
 
     shutil.copy(f"{chdir}/Chart_{levels[level]}/{id}{num}.json", f"{dir_path}/{id}.json")
-    shutil.copy(f"{chdir}/Illustration/{id}{num}.png", f"{dir_path}/{id}.png")
-    shutil.copy(f"{chdir}/music/{id}{num}.ogg", f"{dir_path}/{id}.ogg")
+    if os.path.exists(f"{chdir}/Illustration/{id}{num}_{levels[level]}.png"):
+        shutil.copy(f"{chdir}/Illustration/{id}{num}_{levels[level]}.png", f"{dir_path}/{id}.png")
+    elif os.path.exists(f"{chdir}/Illustration/{id}{num}.png"):
+        shutil.copy(f"{chdir}/Illustration/{id}{num}.png", f"{dir_path}/{id}.png")
+
+    if os.path.exists(f"{chdir}/music/{id}{num}_{levels[level]}.ogg"):
+        shutil.copy(f"{chdir}/music/{id}{num}_{levels[level]}.ogg", f"{dir_path}/{id}.ogg")
+    elif os.path.exists(f"{chdir}/music/{id}{num}.ogg"):
+        shutil.copy(f"{chdir}/music/{id}{num}.ogg", f"{dir_path}/{id}.ogg")
 
     pbar.update(1)
 
